@@ -33,25 +33,14 @@ const authorizerole = (role) => {
   };
 };
 
-// const VerifyAdmin = async(req,res,next) => {
-//   const userEmail=req.user.email
-//  const verify=await Signup.findOne({userEmail})
-//  if (!verify) {
-//   return res.status(404).json({ message: "User not found in the database" });
-// }
-//  if(verify.role!=="admin"){
-//   return res.status(403).json({ message: "You do not have permission to perform this"})
-//  }
-//  next()
-// };
 
 const VerifyAdmin = async (req, res, next) => {
   try {
     const userEmail = req.user.email;
-    console.log("Email extracted from token:", userEmail);
+    console.log(userEmail);
 
     const verify = await Signup.findOne({ email: userEmail });
-    console.log("User retrieved from database:", verify);
+    console.log(verify);
 
     if (!verify) {
       return res
