@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Carts = require("../models/cartschema");
 const File = require("../models/fileschema");
 const Signup = require("../models/Signupschema");
@@ -104,8 +105,54 @@ const removecart=async(req,res)=>{
   }
 }
 
+const Gettingproductsformcart=async(req,res)=>{
+  console.log("hello");
+  try{
+    const {userId}=req.params;
+    console.log(userId);
+    
+    const Userexist=await Signup.findById(userId)
+    console.log(Userexist)
+    if(!Userexist){
+      return res.status(404).json({message:"user details not found"})
+    }
+    console.log(Userexist)
+    const Foundcart=await Carts.findOne({userId})
+    if(!Foundcart){
+      return res.status(400).json({message:"cart details are not found for this user"})
+    }
+    console.log(Foundcart)
 
-module.exports = {Addproductcart,removecart};
+    const cart = await Carts.aggregate([
+      { $match: { userId:new mongoose.Types.ObjectId(userId) } }, 
+      { $unwind: "$products" }, 
+      {
+          $addFields: {
+              totalPrice: { $multiply: ["$products.price", "$products.quantity"] } 
+          }
+      },
+      {
+          $group: {
+              _id: "$_id", 
+              products: { $push: "$products" }, 
+              totalSum: { $sum: "$totalPrice" } 
+          }
+      }
+  ]);
+    console.log(cart)
+
+    if (!cart || cart.length === 0) {
+      return res.status(400).json({ message: "Cart is empty, no items found" });
+    }
+return res.status(200).json({message:"Fetching products from the cart",cart})
+  }
+  catch(err){
+console.log(err)
+return res.status(500).json({message:"Internal server error"})
+}
+}
+
+module.exports = {Addproductcart,removecart,Gettingproductsformcart};
 
 
 
