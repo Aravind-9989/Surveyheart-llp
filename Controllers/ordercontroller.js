@@ -13,6 +13,7 @@ const orderplaced = async (req, res) => {
         return res.status(400).json({message:"user details not found"})
     }
     console.log(userexist)
+   
     const cartexist = await Carts.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(userId) } },
         { $unwind: "$products" },
@@ -29,6 +30,7 @@ const orderplaced = async (req, res) => {
           },
         },
       ]);
+    
     console.log(cartexist) 
     if(!cartexist || !cartexist.length===0||!cartexist[0].products ||cartexist[0].products.length===0){
         return res.status(400).json({message:"cart not found"})
@@ -49,15 +51,5 @@ const orderplaced = async (req, res) => {
   }
 };
 
-const getorders=async(req,res)=>{
-    try{
-        const {userId}=req.params;
-      return res.status(200).json({message:"All orders get successfully"})
-    }
-    catch(err){
-        console.log(err)
-        return res.status(500).json({message:"Internal server error"})
 
-    }
-}
-module.exports = {orderplaced,getorders};
+module.exports = {orderplaced};

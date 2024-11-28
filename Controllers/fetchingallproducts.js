@@ -7,7 +7,7 @@ const Getallproduct = async (req, res) => {
     const Totalprice = await File.aggregate([
       {
         $match: {
-          location: { $in: ["hyderabad", "banglore", "chennai"] },
+          location: { $in: ["hyderabad", "banglore", "chennai","usa"] },
           Image: { $exists: true },
         },
       },

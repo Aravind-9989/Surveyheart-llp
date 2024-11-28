@@ -31,6 +31,5 @@ router.post("/remove",Cartcontroller.removecart)
 router.get("/fetchcart/:userId",Cartcontroller.Gettingproductsformcart)
 
 router.post("/placed/:userId",placingorders.orderplaced)
-router.get("/getdata",placingorders.getorders)
 
 module.exports = router;
