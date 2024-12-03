@@ -10,8 +10,6 @@ const updates=require("../controllers/updatecontroller")
 
 
 router.post("/fileuploads", upload.single("productlink"), Files);
-// The "productlink field will handle the uploaded file and save it with the original name
-// this product link is a key easy to identify where we are pushing the images into a file 
 router.delete("/removes/:id",deletedata);
 router.get("/fetches/:location",fetch)
 router.put("/update/:id",upload.single("productlink"),updates)
