@@ -15,6 +15,7 @@ const FavoriteSchema = new mongoose.Schema({
     type: Date,
     default: Date.now, 
   },
+  
 });
 
 const Favorite = mongoose.model("Favorite", FavoriteSchema);

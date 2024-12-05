@@ -8,11 +8,17 @@ const orderplaced = async (req, res) => {
     const { userId } = req.params;
     const status=req.body.status || "pending";
     console.log(userId)
+    
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: " Invalid Mongodb ID format " });
+    }
+
     const userexist=await Signup.findById(userId)
     if(!userexist){
         return res.status(400).json({message:"user details not found"})
     }
     console.log(userexist)
+   
     const cartexist = await Carts.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(userId) } },
         { $unwind: "$products" },
@@ -29,6 +35,7 @@ const orderplaced = async (req, res) => {
           },
         },
       ]);
+    
     console.log(cartexist) 
     if(!cartexist || !cartexist.length===0||!cartexist[0].products ||cartexist[0].products.length===0){
         return res.status(400).json({message:"cart not found"})
@@ -38,26 +45,20 @@ const orderplaced = async (req, res) => {
       userId: userId,
       products: products,
       totalSum:totalSum,
-      status: "pending",
+      status: "Sucess",
     });
     await order.save();
     console.log(order)
+    await Carts.deleteMany({ userId });
+    console.log(`Cart cleared for user: ${userId}`);
     return res.status(200).json({ message: "Order placed",order });
-  } catch (err) {
+  } 
+  
+  catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-const getorders=async(req,res)=>{
-    try{
-        const {userId}=req.params;
-      return res.status(200).json({message:"All orders get successfully"})
-    }
-    catch(err){
-        console.log(err)
-        return res.status(500).json({message:"Internal server error"})
 
-    }
-}
-module.exports = {orderplaced,getorders};
+module.exports = {orderplaced};

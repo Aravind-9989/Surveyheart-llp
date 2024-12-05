@@ -16,6 +16,8 @@ const {authenticate,authorizerole,VerifyAdmin}=require("../middlewares/Authmiddl
 // making the products into wishlist
 const Fav=require("../Controllers/Favouriteproducts");
 const RemoveFav=require("../Controllers/removefavourite");
+const Favourates=require("../Controllers/allfav")
+
 
 router.post("/File",authenticate,authorizerole("admin"),VerifyAdmin, Multerfiles.single("productImage"), Filesuploads);
 router.put("/Updates/:id",authenticate,authorizerole("admin"),VerifyAdmin, Multerfiles.single("productImage"), updateid);
@@ -25,12 +27,12 @@ router.get("/Allproducts",Products)
 
 router.post("/favourite",Fav);
 router.post("/Delete/:id",RemoveFav)
+router.get("/favourite",Favourates) 
 
 router.post("/carts",Cartcontroller.Addproductcart)
 router.post("/remove",Cartcontroller.removecart)
 router.get("/fetchcart/:userId",Cartcontroller.Gettingproductsformcart)
 
 router.post("/placed/:userId",placingorders.orderplaced)
-router.get("/getdata",placingorders.getorders)
 
 module.exports = router;

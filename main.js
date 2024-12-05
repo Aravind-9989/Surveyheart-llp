@@ -1,30 +1,39 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const mongoose = require("mongoose");
 const Routefolders = require("./routes/route");
-const Details=require("./routes/Authroutes")
-// middle ware
+const Details = require("./routes/Authroutes");
+const dotenv = require("dotenv");
+dotenv.config({ path: "./configuration.env", debug: true });
+const multer=require("multer")
+
+const mongoose = require("mongoose");
+
 app.use(express.json());
-// All the routes passing with the end the point
 app.use("/Routes", Routefolders);
 
-// This routes will be for the authentication and authorization
-app.use("/survey",Details)
+app.use("/survey", Details);
 
-// when we are passing the url into the browser the image will be displayed
-app.use("/uploads", express.static(path.join(__dirname,"uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
-// mongodb connection 
-mongoose.connect("mongodb://localhost:27017/Aravinds")
-    .then(() => {
-        console.log("Connected to database");
-    })
-    .catch((error) => {
-        console.error("Database connection failed:");
-    });
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    res.status(400).send("file should not excced with 2mb");
+  } else {
+    res.status(400).send('Error is occuring during file uploading');
+  }
+});
+mongoose
+  // .connect("mongodb://localhost:27017/testdb")
+  .connect("mongodb://localhost:27017/Aravinds")
+  .then(() => {
+    console.log("Connected to database");
+  })
+  .catch((error) => {
+    console.log("Database connection failed:", error);
+  });
 
 app.listen(3006, () => {
-    console.log("Server is running on port 3006");
+  console.log("Server is running on port 3006");
 });
+module.exports = {app};

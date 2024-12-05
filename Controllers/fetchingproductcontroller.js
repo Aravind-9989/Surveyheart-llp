@@ -1,8 +1,12 @@
 const product = require("../models/fileschema");
-
+const mongoose=require("mongoose")
 const Fetchingproduct = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: " Invalid Mongodb ID format " });
+    }
 
     if (!id) {
       return res

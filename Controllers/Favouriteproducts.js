@@ -9,6 +9,8 @@ const Favourite = async (req, res) => {
     console.log(id);
     console.log(userId);
 
+
+
     if (!id || !userId) {
       return res
         .status(400)

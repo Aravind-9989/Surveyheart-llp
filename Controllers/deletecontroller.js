@@ -2,11 +2,18 @@
 const fs = require("fs");
 const path = require("path");
 const product = require("../models/fileschema");
+const mongoose=require("mongoose")
+const Favorite = require("../models/favour");
 
 const deleteProductById = async (req, res) => {
+ 
   try {
     const productId = req.params.productId;
     console.log(productId);
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: " Invalid Mongodb ID format " });
+    }
 
     const productToDelete = await product.findById(productId);
     if (!productToDelete) {
@@ -22,6 +29,12 @@ const deleteProductById = async (req, res) => {
       const filePath = path.resolve(__dirname, "../uploads", filename);
 
       console.log(filePath);
+
+    const favourdelete=await Favorite.deleteMany({productId:productId})
+    if(favourdelete){
+      console.log("file deleted")
+    }
+
 
       if (fs.existsSync(filePath)) {
 

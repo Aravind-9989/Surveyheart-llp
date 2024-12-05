@@ -65,9 +65,10 @@ const Addproductcart = async (req, res) => {
           cart.products[indexproduct].quantity * productcart.ProductPrice;
       } else {
         const totalPrice = productcart.ProductPrice * quantity;
-        if (totalPrice) {
-          return res.status(400).json({ message: "Invalid totalPrice calculation" });
+        if (isNaN(productcart.ProductPrice) || productcart.ProductPrice <= 0) {
+          return res.status(400).json({ message: "Invalid product price" });
         }
+        
 
         cart.products.push({
           productId,
@@ -85,6 +86,7 @@ const Addproductcart = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const removecart=async(req,res)=>{
   try{
@@ -105,11 +107,20 @@ const removecart=async(req,res)=>{
   }
 }
 
+
+
+
+
 const Gettingproductsformcart=async(req,res)=>{
   console.log("hello");
   try{
     const {userId}=req.params;
     console.log(userId);
+    
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: " Invalid Mongodb ID format " });
+    }
+
     
     const Userexist=await Signup.findById(userId)
     console.log(Userexist)
@@ -124,20 +135,20 @@ const Gettingproductsformcart=async(req,res)=>{
     console.log(Foundcart)
 
     const cart = await Carts.aggregate([
-      { $match: { userId:new mongoose.Types.ObjectId(userId) } }, 
-      { $unwind: "$products" }, 
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: "$products" },
       {
-          $addFields: {
-              totalPrice: { $multiply: ["$products.price", "$products.quantity"] } 
-          }
+        $addFields: {
+          totalPrice: { $multiply: ["$products.totalPrice", "$products.quantity"] },
+        },
       },
       {
-          $group: {
-              _id: "$_id", 
-              products: { $push: "$products" }, 
-              totalSum: { $sum: "$totalPrice" } 
-          }
-      }
+        $group: {
+          _id: "$userId",
+          products: { $push: "$products" },
+          totalSum: { $sum: "$totalPrice" },
+        },
+      },
   ]);
     console.log(cart)
 
@@ -153,30 +164,4 @@ return res.status(500).json({message:"Internal server error"})
 }
 
 module.exports = {Addproductcart,removecart,Gettingproductsformcart};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
