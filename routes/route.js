@@ -12,7 +12,7 @@ const Cartcontroller=require("../Controllers/cartscontroller")
 const placingorders=require("../Controllers/ordercontroller");
 // Authorization
 const {authenticate,authorizerole,VerifyAdmin}=require("../middlewares/Authmiddleware")
-
+// const validates=require("../middlewares/imagevalidate")
 // making the products into wishlist
 const Fav=require("../Controllers/Favouriteproducts");
 const RemoveFav=require("../Controllers/removefavourite");

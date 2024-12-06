@@ -4,7 +4,8 @@ const Addproductfile = async (req, res) => {
   try {
     const { ProductName, ProductDescrption, ProductPrice, location, quantity } =
       req.body;
-      
+     
+    
     const image = req.file ? req.file.filename : null;
     if (!image) {
       return res  
